@@ -2,10 +2,10 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score
+from xgboost import XGBRegressor
 
-st.title("🤖 AI-Driven Adaptive Scheduling")
+st.title("🤖 AI-Driven Adaptive Scheduling (XGBoost)")
 
 # ----------------------------
 # Upload CSV
@@ -48,8 +48,17 @@ if uploaded_file is not None:
             X_encoded, y, test_size=0.2, random_state=42
         )
 
-        # Train Random Forest
-        model = RandomForestRegressor(n_estimators=200, random_state=42)
+        # ----------------------------
+        # Train XGBoost
+        # ----------------------------
+        model = XGBRegressor(
+            n_estimators=500,
+            learning_rate=0.05,
+            max_depth=6,
+            subsample=0.8,
+            colsample_bytree=0.8,
+            random_state=42
+        )
         model.fit(X_train, y_train)
 
         # Evaluate accuracy
