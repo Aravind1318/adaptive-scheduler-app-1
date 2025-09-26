@@ -8,13 +8,34 @@ from sklearn.metrics import r2_score
 st.title("🤖 AI-Driven Adaptive Scheduling")
 
 # ----------------------------
+# Feature Engineering Function
+# ----------------------------
+def add_engineered_features(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.copy()
+    if "production_load" in df and "deadline_hours" in df:
+        df["urgency"] = df["production_load"] / (df["deadline_hours"] + 1e-3)
+    if "available_operators" in df and "available_machines" in df:
+        df["operator_machine_ratio"] = df["available_operators"] / (df["available_machines"] + 1)
+    if "expected_runtime_min" in df and "machine_efficiency" in df:
+        df["adjusted_runtime"] = df["expected_runtime_min"] / (df["machine_efficiency"] + 1e-3)
+    if "production_load" in df and "available_operators" in df:
+        df["load_per_operator"] = df["production_load"] / (df["available_operators"] + 1)
+    if "shift" in df:
+        df["shift_binary"] = df["shift"].apply(lambda x: 1 if str(x).lower() == "night" else 0)
+    return df
+
+# ----------------------------
 # Upload CSV
 # ----------------------------
 uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
 
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
-    st.write("✅ Dataset loaded successfully!")
+
+    # Add engineered features automatically
+    df = add_engineered_features(df)
+
+    st.write("✅ Dataset loaded successfully with engineered features!")
     st.dataframe(df.head())
 
     # ----------------------------
@@ -52,10 +73,9 @@ if uploaded_file is not None:
         # Train Random Forest
         model = RandomForestRegressor(
             n_estimators=300,
-            max_depth=15,
-            min_samples_split=4,
-            min_samples_leaf=2,
-            random_state=42
+            max_depth=None,
+            random_state=42,
+            n_jobs=-1
         )
         model.fit(X_train, y_train)
 
@@ -98,6 +118,9 @@ if "model" in st.session_state:
 
     if st.button("Predict"):
         input_df = pd.DataFrame([input_data])
+
+        # Apply same feature engineering to new input
+        input_df = add_engineered_features(input_df)
 
         # Apply same encoding as training
         input_encoded = pd.get_dummies(input_df, drop_first=True)
