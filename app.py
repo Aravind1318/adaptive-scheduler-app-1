@@ -12,16 +12,16 @@ st.title("🤖 AI-Driven Adaptive Scheduling")
 # ----------------------------
 def add_engineered_features(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
-    if "production_load" in df and "deadline_hours" in df:
-        df["urgency"] = df["production_load"] / (df["deadline_hours"] + 1e-3)
-    if "available_operators" in df and "available_machines" in df:
-        df["operator_machine_ratio"] = df["available_operators"] / (df["available_machines"] + 1)
-    if "expected_runtime_min" in df and "machine_efficiency" in df:
-        df["adjusted_runtime"] = df["expected_runtime_min"] / (df["machine_efficiency"] + 1e-3)
-    if "production_load" in df and "available_operators" in df:
-        df["load_per_operator"] = df["production_load"] / (df["available_operators"] + 1)
-    if "shift" in df:
-        df["shift_binary"] = df["shift"].apply(lambda x: 1 if str(x).lower() == "night" else 0)
+    if "Production_Load" in df and "Deadline_Hours" in df:
+        df["Urgency"] = df["Production_Load"] / (df["Deadline_Hours"] + 1e-3)
+    if "Available_Operators" in df and "Available_Machines" in df:
+        df["Operator_Machine_Ratio"] = df["Available_Operators"] / (df["Available_Machines"] + 1)
+    if "Expected_Runtime_Min" in df and "Machine_Efficiency" in df:
+        df["Adjusted_Runtime"] = df["Expected_Runtime_Min"] / (df["Machine_Efficiency"] + 1e-3)
+    if "Production_Load" in df and "Available_Operators" in df:
+        df["Load_per_operator"] = df["Production_Load"] / (df["Available_Operators"] + 1)
+    if "Shift" in df:
+        df["Shift_binary"] = df["Shift"].apply(lambda x: 1 if str(x).lower() == "night" else 0)
     return df
 
 # ----------------------------
@@ -47,12 +47,12 @@ if uploaded_file is not None:
     input_cols = st.multiselect(
         "Select Input Columns (X)", 
         all_columns, 
-        default=[c for c in all_columns if c not in ["machine", "manpower"]]
+        default=[c for c in all_columns if c not in ["Machine", "Manpower"]]
     )
     output_cols = st.multiselect(
         "Select Output Columns (y)", 
         all_columns, 
-        default=["machine", "manpower"]
+        default=["Machine", "Manpower"]
     )
 
     # ----------------------------
