@@ -39,61 +39,59 @@ if uploaded_file is not None:
     st.dataframe(df.head())
 
     # ----------------------------
-    # Select input & output columns
+    # Lock outputs: machine + manpower
     # ----------------------------
     all_columns = df.columns.tolist()
-    st.subheader("Select Features and Target Columns")
+    output_cols = [col for col in ["machine", "manpower"] if col in all_columns]
 
-    # Input columns (exclude target cols if present)
-    input_cols = st.multiselect(
-        "Select Input Columns (X)", 
-        all_columns, 
-        default=[c for c in all_columns if c not in ["machine", "manpower"]]
-    )
-
-    # Output columns (safe defaults)
-    output_cols = st.multiselect(
-        "Select Output Columns (y)", 
-        all_columns, 
-        default=[c for c in ["machine", "manpower"] if c in all_columns]
-    )
-
-    # ----------------------------
-    # Train button
-    # ----------------------------
-    if input_cols and output_cols and st.button("🚀 Train Model"):
-        X = df[input_cols]
-        y = df[output_cols]
-
-        # Encode categorical variables
-        X_encoded = pd.get_dummies(X, drop_first=True)
-
-        # Train-test split
-        X_train, X_test, y_train, y_test = train_test_split(
-            X_encoded, y, test_size=0.2, random_state=42
+    if not output_cols:
+        st.error("❌ Your dataset must include 'machine' and/or 'manpower' as output columns.")
+    else:
+        st.subheader("Select Feature Columns (Inputs)")
+        input_cols = st.multiselect(
+            "Select Input Columns (X)", 
+            all_columns, 
+            default=[c for c in all_columns if c not in output_cols]
         )
 
-        # Train Random Forest
-        model = RandomForestRegressor(
-            n_estimators=300,
-            max_depth=None,
-            random_state=42,
-            n_jobs=-1
-        )
-        model.fit(X_train, y_train)
+        # ----------------------------
+        # Train button
+        # ----------------------------
+        if input_cols and st.button("🚀 Train Model"):
+            X = df[input_cols]
+            y = df[output_cols]
 
-        # Evaluate accuracy
-        y_pred = model.predict(X_test)
-        r2 = r2_score(y_test, y_pred)
-        st.subheader("📊 Model Accuracy")
-        st.write(f"✅ R² Score: {r2*100:.2f}%")
+            # Encode categorical variables
+            X_encoded = pd.get_dummies(X, drop_first=True)
 
-        # Save model in session state
-        st.session_state["model"] = model
-        st.session_state["features"] = X_encoded.columns
-        st.session_state["output_cols"] = output_cols
-        st.session_state["input_cols"] = input_cols
-        st.session_state["df"] = df
+            # Train-test split
+            X_train, X_test, y_train, y_test = train_test_split(
+                X_encoded, y, test_size=0.2, random_state=42
+            )
+
+            # Train Random Forest
+            model = RandomForestRegressor(
+                n_estimators=500,
+                max_depth=20,
+                min_samples_split=5,
+                min_samples_leaf=2,
+                random_state=42,
+                n_jobs=-1
+            )
+            model.fit(X_train, y_train)
+
+            # Evaluate accuracy
+            y_pred = model.predict(X_test)
+            r2 = r2_score(y_test, y_pred)
+            st.subheader("📊 Model Accuracy")
+            st.write(f"✅ R² Score: {r2*100:.2f}%")
+
+            # Save model in session state
+            st.session_state["model"] = model
+            st.session_state["features"] = X_encoded.columns
+            st.session_state["output_cols"] = output_cols
+            st.session_state["input_cols"] = input_cols
+            st.session_state["df"] = df
 
 # ----------------------------
 # Prediction section
@@ -136,4 +134,4 @@ if "model" in st.session_state:
         for i, col in enumerate(st.session_state["output_cols"]):
             st.write(f"**{col}: {prediction[i]}**")
 else:
-    st.info("Please upload a CSV, select columns, and click 🚀 Train Model")
+    st.info("Please upload a CSV, then click 🚀 Train Model")
