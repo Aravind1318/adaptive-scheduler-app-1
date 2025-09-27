@@ -5,9 +5,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score
 
-# ==============================
-# Streamlit Page Setup + CSS
-# ==============================
 st.set_page_config(page_title="🤖 AI-Driven Adaptive Scheduling", layout="wide")
 
 st.markdown("""
@@ -40,9 +37,6 @@ st.markdown("""
 
 st.title("🤖 AI-Driven Adaptive Scheduling")
 
-# ==============================
-# Feature Engineering Function
-# ==============================
 def add_engineered_features(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
     if "Production_Load" in df and "Deadline_Hours" in df:
@@ -56,28 +50,19 @@ def add_engineered_features(df: pd.DataFrame) -> pd.DataFrame:
     if "Shift" in df:
         df["shift_binary"] = df["Shift"].apply(lambda x: 1 if str(x).lower() == "night" else 0)
     return df
-
-# ==============================
-# Upload CSV
-# ==============================
 uploaded_file = st.file_uploader("📂 Upload your CSV file", type=["csv"])
 
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
 
-    # Add engineered features automatically
     df = add_engineered_features(df)
 
-    # Identify engineered feature names to exclude from outputs
     engineered_features = ["urgency", "operator_machine_ratio", "adjusted_runtime",
                            "load_per_operator", "shift_binary"]
 
     st.write("✅ Dataset loaded successfully with engineered features!")
     st.dataframe(df.head())
 
-    # ==============================
-    # Select input & output columns
-    # ==============================
     all_columns = df.columns.tolist()
     st.subheader("⚙️ Select Features and Target Columns")
 
@@ -92,22 +77,16 @@ if uploaded_file is not None:
         default=[c for c in all_columns if c not in engineered_features and c not in input_cols]
     )
 
-    # ==============================
-    # Train Model
-    # ==============================
     if input_cols and output_cols and st.button("🚀 Train Model"):
         X = df[input_cols]
         y = df[output_cols]
 
-        # Encode categorical variables
         X_encoded = pd.get_dummies(X, drop_first=True)
 
-        # Train-test split
         X_train, X_test, y_train, y_test = train_test_split(
             X_encoded, y, test_size=0.2, random_state=42
         )
 
-        # Train Random Forest
         model = RandomForestRegressor(
             n_estimators=300,
             max_depth=None,
@@ -116,23 +95,18 @@ if uploaded_file is not None:
         )
         model.fit(X_train, y_train)
 
-        # Evaluate accuracy
         y_pred = model.predict(X_test)
         r2 = r2_score(y_test, y_pred, multioutput="uniform_average")
 
         st.subheader("📊 Model Accuracy")
         st.write(f"✅ R² Score: {r2*100:.2f}%")
 
-        # Save model in session state
         st.session_state["model"] = model
         st.session_state["features"] = X_encoded.columns
         st.session_state["output_cols"] = output_cols
         st.session_state["input_cols"] = input_cols
         st.session_state["df"] = df
 
-# ==============================
-# Prediction Section
-# ==============================
 if "model" in st.session_state:
     st.subheader("🔧 Predict for New Input")
 
@@ -158,10 +132,8 @@ if "model" in st.session_state:
     if st.button("Predict"):
         input_df = pd.DataFrame([input_data])
 
-        # Apply same feature engineering
         input_df = add_engineered_features(input_df)
 
-        # Apply same encoding as training
         input_encoded = pd.get_dummies(input_df, drop_first=True)
         input_encoded = input_encoded.reindex(columns=st.session_state["features"], fill_value=0)
 
@@ -169,7 +141,7 @@ if "model" in st.session_state:
 
         st.success("🎯 Predictions:")
         for i, col in enumerate(output_cols):
-            # ✅ Special case: Machine & Manpower should be integers
+   
             if col.lower() in ["machine", "manpower"]:
                 val = int(round(prediction[i]))
             else:
