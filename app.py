@@ -24,7 +24,6 @@ def add_engineered_features(df: pd.DataFrame) -> pd.DataFrame:
         df["Shift_binary"] = df["Shift"].apply(lambda x: 1 if str(x).lower() == "night" else 0)
     return df
 
-
 # -----------------------------
 # File Upload
 # -----------------------------
@@ -73,7 +72,7 @@ if uploaded_file is not None:
         model.fit(X_train, y_train)
 
         y_pred = model.predict(X_test)
-        r2 = r2_score(y_test, y_pred)
+        r2 = r2_score(y_test, y_pred, multioutput="uniform_average")
         st.subheader("📊 Model Accuracy")
         st.write(f"✅ R² Score: {r2*100:.2f}%")
 
@@ -115,25 +114,26 @@ if "model" in st.session_state:
         input_encoded = pd.get_dummies(input_df, drop_first=True)
         input_encoded = input_encoded.reindex(columns=st.session_state["features"], fill_value=0)
 
-        # ML prediction
-        ml_prediction = st.session_state["model"].predict(input_encoded)
-        ml_prediction = np.atleast_1d(ml_prediction)[0]
+        # ML prediction (array if multiple outputs, float if single)
+        ml_prediction = st.session_state["model"].predict(input_encoded)[0]
 
         # Base runtime heuristic (simple example: inversely proportional to manpower*machine)
         manpower = input_data.get("Manpower", 1)
         machine = input_data.get("Machine", 1)
         base_runtime = (input_data.get("Production_Load", 100) / (manpower * machine + 1e-3))
 
-        # Weighted runtime
-        final_runtime = (0.7 * base_runtime) + (0.3 * ml_prediction)
-
         # Show predictions
         st.success("🎯 Predictions:")
-        for col in st.session_state["output_cols"]:
+        for i, col in enumerate(st.session_state["output_cols"]):
             if col == "Expected_Runtime_Min":
+                # Weighted runtime calculation
+                final_runtime = (0.7 * base_runtime) + (0.3 * ml_prediction[i] if isinstance(ml_prediction, (list, np.ndarray)) else ml_prediction)
                 st.write(f"**{col}:** {final_runtime:.2f}")
             else:
-                st.write(f"**{col}:** {ml_prediction:.2f}")
+                if isinstance(ml_prediction, (list, np.ndarray)):
+                    st.write(f"**{col}:** {ml_prediction[i]:.2f}")
+                else:
+                    st.write(f"**{col}:** {ml_prediction:.2f}")
 
 else:
     st.info("Please upload a CSV, select columns, and click 🚀 Train Model")
