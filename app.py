@@ -104,7 +104,8 @@ if "model" in st.session_state:
         input_encoded = input_encoded.reindex(columns=st.session_state["features"], fill_value=0)
 
         prediction = st.session_state["model"].predict(input_encoded)
-        prediction = np.round(prediction[0]).astype(int)
+        prediction = np.round(prediction).astype(int)
+        prediction = np.atleast_2d(prediction)
 
         st.success("🎯 Predictions:")
         for i, col in enumerate(st.session_state["output_cols"]):
