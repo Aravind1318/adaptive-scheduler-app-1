@@ -50,6 +50,7 @@ def add_engineered_features(df: pd.DataFrame) -> pd.DataFrame:
     if "Shift" in df:
         df["shift_binary"] = df["Shift"].apply(lambda x: 1 if str(x).lower() == "night" else 0)
     return df
+
 uploaded_file = st.file_uploader("📂 Upload your CSV file", type=["csv"])
 
 if uploaded_file is not None:
@@ -117,11 +118,12 @@ if "model" in st.session_state:
     input_data = {}
     for col in input_cols:
         if df[col].dtype in ["int64", "float64"]:
+            # Allow a wider input range instead of restricting to dataset min/max
             val = st.number_input(
                 f"{col}", 
-                float(df[col].min()), 
-                float(df[col].max()), 
-                float(df[col].mean())
+                min_value=0.0, 
+                max_value=10000.0, 
+                value=float(df[col].mean())
             )
             input_data[col] = val
         else:
@@ -141,7 +143,6 @@ if "model" in st.session_state:
 
         st.success("🎯 Predictions:")
         for i, col in enumerate(output_cols):
-   
             if col.lower() in ["machine", "manpower"]:
                 val = int(round(prediction[i]))
             else:
