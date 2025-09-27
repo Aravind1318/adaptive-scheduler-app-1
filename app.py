@@ -39,13 +39,13 @@ if uploaded_file is not None:
     st.dataframe(df.head())
 
     # ----------------------------
-    # Lock outputs: machine + manpower
+    # Detect outputs automatically
     # ----------------------------
     all_columns = df.columns.tolist()
-    output_cols = [col for col in ["machine", "manpower"] if col in all_columns]
+    output_cols = [col for col in all_columns if "machine" in col.lower() or "manpower" in col.lower()]
 
     if not output_cols:
-        st.error("❌ Your dataset must include 'machine' and/or 'manpower' as output columns.")
+        st.error("❌ No output columns found. Please ensure your dataset has columns related to 'machine' or 'manpower'.")
     else:
         st.subheader("Select Feature Columns (Inputs)")
         input_cols = st.multiselect(
