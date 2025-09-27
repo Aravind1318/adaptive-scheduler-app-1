@@ -169,6 +169,11 @@ if "model" in st.session_state:
 
         st.success("🎯 Predictions:")
         for i, col in enumerate(output_cols):
-            st.markdown(f'<div class="metric-card">{col}: {prediction[i]:.2f}</div>', unsafe_allow_html=True)
+            # ✅ Special case: Machine & Manpower should be integers
+            if col.lower() in ["machine", "manpower"]:
+                val = int(round(prediction[i]))
+            else:
+                val = round(prediction[i], 2)
+            st.markdown(f'<div class="metric-card">{col}: {val}</div>', unsafe_allow_html=True)
 else:
     st.info("📥 Please upload a CSV, select columns, and click 🚀 Train Model")
