@@ -130,10 +130,18 @@ if "model" in st.session_state:
                 final_runtime = (0.7 * base_runtime) + (0.3 * ml_prediction[i] if isinstance(ml_prediction, (list, np.ndarray)) else ml_prediction)
                 st.write(f"**{col}:** {final_runtime:.2f}")
             else:
-                if isinstance(ml_prediction, (list, np.ndarray)):
-                    st.write(f"**{col}:** {ml_prediction[i]:.2f}")
+                if col in ["Machine", "Manpower"]:
+                    if isinstance(ml_prediction, (list, np.ndarray)):
+                        st.write(f"**{col}:** {int(round(ml_prediction[i]))}")
+                    else:
+                        st.write(f"**{col}:** {int(round(ml_prediction))}")
                 else:
-                    st.write(f"**{col}:** {ml_prediction:.2f}")
+    # Keep decimals for continuous targets
+                    if isinstance(ml_prediction, (list, np.ndarray)):
+                        st.write(f"**{col}:** {ml_prediction[i]:.2f}")
+                    else:
+                        st.write(f"**{col}:** {ml_prediction:.2f}")
+
 
 else:
     st.info("Please upload a CSV, select columns, and click 🚀 Train Model")
