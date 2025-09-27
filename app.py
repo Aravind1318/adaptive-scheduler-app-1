@@ -8,6 +8,9 @@ from sklearn.metrics import r2_score
 st.title("🤖 AI-Driven Adaptive Scheduling")
 
 
+# ----------------------------
+# Feature Engineering Function
+# ----------------------------
 def add_engineered_features(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
     if "Production_Load" in df and "Deadline_Hours" in df:
@@ -22,33 +25,37 @@ def add_engineered_features(df: pd.DataFrame) -> pd.DataFrame:
         df["Shift_binary"] = df["Shift"].apply(lambda x: 1 if str(x).lower() == "night" else 0)
     return df
 
+
+# ----------------------------
+# Upload CSV
+# ----------------------------
 uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
 
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
 
+    # Add engineered features
     df = add_engineered_features(df)
 
     st.write("✅ Dataset loaded successfully with engineered features!")
     st.dataframe(df.head())
 
     all_columns = df.columns.tolist()
+
     st.subheader("Select Features and Target Columns")
 
-    input_cols = st.multiselect(
-        "Select Input Columns (X)", 
-        all_columns, 
-        default=[c for c in all_columns if c not in ["Machine", "Manpower"]]
-    )
-    output_cols = st.multiselect(
-        "Select Output Columns (y)", 
-        all_columns, 
-        default=["Machine", "Manpower"]
-    )
+    # Let user choose any X and Y
+    input_cols = st.multiselect("Select Input Columns (X)", all_columns)
+    output_cols = st.multiselect("Select Output Columns (y)", all_columns)
 
+    # ----------------------------
+    # Train Model
+    # ----------------------------
     if input_cols and output_cols and st.button("🚀 Train Model"):
         X = df[input_cols]
         y = df[output_cols]
+
+        # Encode categorical variables
         X_encoded = pd.get_dummies(X, drop_first=True)
 
         X_train, X_test, y_train, y_test = train_test_split(
@@ -57,23 +64,37 @@ if uploaded_file is not None:
 
         model = RandomForestRegressor(
             n_estimators=300,
-            max_depth=None,
             random_state=42,
             n_jobs=-1
         )
         model.fit(X_train, y_train)
 
         y_pred = model.predict(X_test)
-        r2 = r2_score(y_test, y_pred)
-        st.subheader("📊 Model Accuracy")
-        st.write(f"✅ R² Score: {r2*100:.2f}%")
 
+        # Handle multi-output R² score
+        if y.shape[1] > 1:
+            scores = [r2_score(y_test.iloc[:, i], y_pred[:, i]) for i in range(y.shape[1])]
+            avg_score = np.mean(scores)
+            st.subheader("📊 Model Accuracy (Multi-output)")
+            for i, col in enumerate(output_cols):
+                st.write(f"R² for {col}: {scores[i]*100:.2f}%")
+            st.write(f"🔹 Average R² Score: {avg_score*100:.2f}%")
+        else:
+            r2 = r2_score(y_test, y_pred)
+            st.subheader("📊 Model Accuracy")
+            st.write(f"✅ R² Score: {r2*100:.2f}%")
+
+        # Save model state
         st.session_state["model"] = model
         st.session_state["features"] = X_encoded.columns
         st.session_state["output_cols"] = output_cols
         st.session_state["input_cols"] = input_cols
         st.session_state["df"] = df
 
+
+# ----------------------------
+# Prediction Section
+# ----------------------------
 if "model" in st.session_state:
     st.subheader("🔧 Predict for New Input")
 
@@ -104,11 +125,11 @@ if "model" in st.session_state:
         input_encoded = input_encoded.reindex(columns=st.session_state["features"], fill_value=0)
 
         prediction = st.session_state["model"].predict(input_encoded)
-        prediction = np.round(prediction).astype(int)
-        prediction = np.atleast_2d(prediction)
+        prediction = np.atleast_2d(prediction)  # ensures 2D for multi-output
 
         st.success("🎯 Predictions:")
         for i, col in enumerate(st.session_state["output_cols"]):
-            st.write(f"**{col}:** {prediction[0][i]}")
+            st.write(f"**{col}:** {prediction[0][i]:.2f}")
+
 else:
     st.info("Please upload a CSV, select columns, and click 🚀 Train Model")
