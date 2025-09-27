@@ -7,33 +7,8 @@ from sklearn.metrics import r2_score
 
 st.set_page_config(page_title="🤖 AI-Driven Adaptive Scheduling", layout="wide")
 
-st.markdown("""
-    <style>
-        body {
-            background: linear-gradient(to bottom right, #00c6ff, #0072ff);
-            color: white;
-        }
-        .metric-card {
-            background: #1e1e2f;
-            padding: 15px;
-            margin: 8px 0;
-            border-radius: 12px;
-            text-align: center;
-            font-size: 18px;
-            color: #ffffff;
-            font-weight: bold;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
-        }
-        .stButton>button {
-            background: linear-gradient(to right, #ff416c, #ff4b2b);
-            color: white;
-            font-weight: bold;
-            border-radius: 12px;
-            padding: 8px 20px;
-            border: none;
-        }
-    </style>
-""", unsafe_allow_html=True)
+
+
 
 st.title("🤖 AI-Driven Adaptive Scheduling")
 
