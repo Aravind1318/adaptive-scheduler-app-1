@@ -6,6 +6,78 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score
 
 st.set_page_config(page_title="🤖 AI-Driven Adaptive Scheduling", layout="wide")
+# =========================
+st.markdown(
+    """
+    <style>
+        body {
+            background: conic-gradient(
+                from 180deg at 50% 50%,
+                #ff4b1f, #ff9068, #ff6a00, #ee0979, #6a11cb, #2575fc,
+                #36d1dc, #5b86e5, #667eea, #764ba2, #ff4b2b, #ff416c, #ff4b1f
+            );
+            background-size: 400% 400%;
+            animation: swirl 15s linear infinite;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        @keyframes swirl {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Transparent glass effect for app content */
+        .stApp {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(6px);
+        }
+
+        /* Title gradient text */
+        .st-emotion-cache-10trblm {
+            background: linear-gradient(to right, #ff6a00, #ee0979, #2575fc, #36d1dc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 3rem !important;
+            font-weight: 900 !important;
+            text-align: center;
+        }
+
+        /* Buttons */
+        div.stButton > button {
+            background: linear-gradient(45deg, #ff6a00, #ee0979);
+            color: white;
+            border-radius: 12px;
+            border: none;
+            padding: 0.6em 1.2em;
+            font-size: 1rem;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: 0.3s ease;
+        }
+        div.stButton > button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+        }
+
+        /* Metric cards */
+        .metric-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 16px;
+            border-radius: 14px;
+            margin: 10px 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 
 
