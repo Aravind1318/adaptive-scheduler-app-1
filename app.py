@@ -9,23 +9,20 @@ st.set_page_config(page_title="🤖 AI-Driven Adaptive Scheduling", layout="wide
 # =========================
 st.markdown("""
     <style>
-    /* Main background with colorful swirl theme */
+    /* Main background with black-gold swirl theme */
     .stApp {
-        background: conic-gradient(
-            from 180deg at 50% 50%,
-            #ff007f,
-            #ff6a00,
-            #ffd700,
-            #00c6ff,
-            #0072ff,
-            #36d1dc,
-            #8e2de2,
-            #ff4b2b,
-            #ff007f
+        background: linear-gradient(
+            135deg,
+            #000000 0%,
+            #1a1a1a 20%,
+            #4d3b1f 40%,
+            #b8860b 60%,
+            #ffd700 80%,
+            #000000 100%
         );
         background-attachment: fixed;
-        background-size: 400% 400%;
-        animation: swirlGradient 25s linear infinite;
+        background-size: 300% 300%;
+        animation: swirlGradient 25s ease infinite;
         font-family: 'Segoe UI', sans-serif;
         color: white;
     }
@@ -35,19 +32,17 @@ st.markdown("""
         50% { background-position: 100% 50%; }
         100% { background-position: 0% 50%; }
     }
-    /* Titles - Solid Black */
-h1, h2, h3, h4 {
-    color: black !important;
-    font-weight: 800;
-    text-shadow: 2px 2px 6px rgba(255,255,255,0.4);
-    -webkit-background-clip: unset !important;
-    -webkit-text-fill-color: black !important;
-}
 
+    /* Titles */
+    h1, h2, h3, h4 {
+        color: #FFD700; /* Gold */
+        font-weight: 800;
+        text-shadow: 2px 2px 6px black;
+    }
 
     /* Buttons */
     .stButton > button {
-        background: linear-gradient(90deg, #ff6a00, #ff007f, #0072ff) !important;
+        background: linear-gradient(90deg, #FFD700, #4d3b1f, #000000) !important;
         color: white !important;
         border: none !important;
         border-radius: 12px !important;
@@ -55,10 +50,10 @@ h1, h2, h3, h4 {
         font-weight: 600 !important;
         cursor: pointer !important;
         transition: all 0.3s ease-in-out !important;
-        box-shadow: 0px 4px 12px rgba(0,0,0,0.5);
+        box-shadow: 0px 4px 8px rgba(0,0,0,0.6);
     }
     .stButton > button:hover {
-        background: linear-gradient(90deg, #ffd700, #36d1dc, #8e2de2) !important;
+        background: linear-gradient(90deg, #ffb700, #b8860b, #2c1a1a) !important;
         transform: scale(1.05) !important;
     }
     .stButton > button:active {
@@ -67,28 +62,28 @@ h1, h2, h3, h4 {
 
     /* Number Input Fields */
     .stNumberInput > div > div > input {
-        background-color: rgba(255,255,255,0.1) !important; 
-        color: #fff !important;
+        background-color: #1a1a1a !important; 
+        color: #FFD700 !important;
         border-radius: 8px !important;
-        border: 2px solid #ff6a00 !important;
+        border: 1px solid #FFD700 !important;
         padding: 6px 10px !important;
     }
 
     /* Selectbox */
     .stSelectbox > div > div > select {
-        background-color: rgba(0,0,0,0.5) !important;
-        color: #fff !important;
+        background-color: #2c1a1a !important;
+        color: #FFD700 !important;
         border-radius: 8px !important;
-        border: 2px solid #ff007f !important;
+        border: 1px solid #FFD700 !important;
         padding: 6px 10px !important;
     }
 
     /* MultiSelect */
     .stMultiSelect > div > div {
-        background-color: rgba(0,0,0,0.5) !important;
-        color: #fff !important;
+        background-color: #000000 !important;
+        color: #FFD700 !important;
         border-radius: 8px !important;
-        border: 2px solid #36d1dc !important;
+        border: 1px solid #FFD700 !important;
         padding: 6px 10px !important;
     }
 
@@ -96,20 +91,20 @@ h1, h2, h3, h4 {
     .stDataFrame {
         border-radius: 12px !important;
         overflow: hidden !important;
-        border: 2px solid #ff007f !important;
+        border: 2px solid #FFD700 !important;
     }
 
     /* Success / Info boxes */
     .stSuccess {
-        background-color: rgba(54,209,220,0.2) !important;
-        border-left: 6px solid #36d1dc !important;
+        background-color: rgba(218,165,32,0.2) !important;
+        border-left: 6px solid #FFD700 !important;
         border-radius: 8px !important;
         padding: 10px !important;
         color: white !important;
     }
     .stInfo {
-        background-color: rgba(255,106,0,0.2) !important;
-        border-left: 6px solid #ff6a00 !important;
+        background-color: rgba(255,215,0,0.15) !important;
+        border-left: 6px solid #DAA520 !important;
         border-radius: 8px !important;
         padding: 10px !important;
         color: white !important;
@@ -117,16 +112,15 @@ h1, h2, h3, h4 {
 
     /* Custom Prediction Cards */
     .metric-card {
-        background: linear-gradient(135deg, #ff007f, #36d1dc, #0072ff);
-        border-radius: 14px;
+        background: linear-gradient(145deg, #000000, #1a1a1a, #2c1a1a);
+        border-radius: 12px;
         padding: 16px;
         margin: 10px 0;
-        box-shadow: 0 6px 16px rgba(0,0,0,0.6);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.6);
         font-size: 1.1rem;
-        font-weight: 700;
-        color: #fff;
-        border: 2px solid #ffd700;
-        text-align: center;
+        font-weight: 600;
+        color: #FFD700;
+        border: 1px solid #FFD700;
     }
     </style>
 """, unsafe_allow_html=True)
