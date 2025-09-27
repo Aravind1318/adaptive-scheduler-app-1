@@ -108,6 +108,6 @@ if "model" in st.session_state:
 
         st.success("🎯 Predictions:")
         for i, col in enumerate(st.session_state["output_cols"]):
-            st.write(f"**{col}:** {prediction[i]}")
+            st.write(f"**{col}:** {prediction}")
 else:
     st.info("Please upload a CSV, select columns, and click 🚀 Train Model")
