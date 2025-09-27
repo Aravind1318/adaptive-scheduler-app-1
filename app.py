@@ -35,16 +35,15 @@ st.markdown("""
         50% { background-position: 100% 50%; }
         100% { background-position: 0% 50%; }
     }
+    /* Titles - Solid Black */
+h1, h2, h3, h4 {
+    color: black !important;
+    font-weight: 800;
+    text-shadow: 2px 2px 6px rgba(255,255,255,0.4);
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: black !important;
+}
 
-    /* Titles */
-    h1, h2, h3, h4 {
-        color: #fff;
-        font-weight: 800;
-        text-shadow: 2px 2px 8px #000;
-        background: linear-gradient(to right, #ff6a00, #ff007f, #0072ff, #ffd700);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
 
     /* Buttons */
     .stButton > button {
