@@ -32,6 +32,19 @@ st.markdown("""
         50% { background-position: 100% 50%; }
         100% { background-position: 0% 50%; }
     }
+    /* Model Accuracy styled same as prediction cards */
+.model-accuracy-card {
+    background: linear-gradient(145deg, #000000, #1a1a1a, #2c1a1a);
+    border-radius: 12px;
+    padding: 16px;
+    margin: 10px 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #FFD700;
+    border: 1px solid #FFD700;
+}
+
 
     /* Titles */
     h1, h2, h3, h4 {
@@ -194,7 +207,10 @@ if uploaded_file is not None:
         r2 = r2_score(y_test, y_pred, multioutput="uniform_average")
 
         st.subheader("📊 Model Accuracy")
-        st.write(f"✅ R² Score: {r2*100:.2f}%")
+        st.markdown(
+    f'<div class="model-accuracy-card">R² Score: {r2*100:.2f}%</div>',
+    unsafe_allow_html=True
+)
 
         st.session_state["model"] = model
         st.session_state["features"] = X_encoded.columns
