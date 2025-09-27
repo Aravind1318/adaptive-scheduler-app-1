@@ -105,15 +105,20 @@ if uploaded_file is not None:
     all_columns = df.columns.tolist()
     st.subheader("⚙️ Select Features and Target Columns")
 
+    # Default input columns = everything except known outputs
     input_cols = st.multiselect(
-        "Select Input Columns (X)", 
-        all_columns, 
+        "Select Input Columns (X)",
+        all_columns,
         default=[c for c in all_columns if c not in ["machine", "manpower"]]
     )
+
+    # Fix: Only use defaults if present in dataset
+    default_outputs = [c for c in ["machine", "manpower"] if c in all_columns]
+
     output_cols = st.multiselect(
-        "Select Output Columns (y)", 
-        all_columns, 
-        default=["machine", "manpower"]
+        "Select Output Columns (y)",
+        all_columns,
+        default=default_outputs
     )
 
     # ----------------------------
@@ -167,9 +172,9 @@ if "model" in st.session_state:
     for col in input_cols:
         if df[col].dtype in ["int64", "float64"]:
             val = st.number_input(
-                f"{col}", 
-                float(df[col].min()), 
-                float(df[col].max()), 
+                f"{col}",
+                float(df[col].min()),
+                float(df[col].max()),
                 float(df[col].mean())
             )
             input_data[col] = val
