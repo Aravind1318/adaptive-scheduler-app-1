@@ -7,77 +7,131 @@ from sklearn.metrics import r2_score
 
 st.set_page_config(page_title="🤖 AI-Driven Adaptive Scheduling", layout="wide")
 # =========================
-st.markdown(
-    """
+st.markdown("""
     <style>
-        body {
-            background: conic-gradient(
-                from 180deg at 50% 50%,
-                #ff4b1f, #ff9068, #ff6a00, #ee0979, #6a11cb, #2575fc,
-                #36d1dc, #5b86e5, #667eea, #764ba2, #ff4b2b, #ff416c, #ff4b1f
-            );
-            background-size: 400% 400%;
-            animation: swirl 15s linear infinite;
-            font-family: 'Poppins', sans-serif;
-        }
+    /* Main background with colorful swirl theme */
+    .stApp {
+        background: conic-gradient(
+            from 180deg at 50% 50%,
+            #ff007f,
+            #ff6a00,
+            #ffd700,
+            #00c6ff,
+            #0072ff,
+            #36d1dc,
+            #8e2de2,
+            #ff4b2b,
+            #ff007f
+        );
+        background-attachment: fixed;
+        background-size: 400% 400%;
+        animation: swirlGradient 25s linear infinite;
+        font-family: 'Segoe UI', sans-serif;
+        color: white;
+    }
 
-        @keyframes swirl {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+    @keyframes swirlGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
 
-        /* Transparent glass effect for app content */
-        .stApp {
-            background: rgba(255, 255, 255, 0.85);
-            border-radius: 16px;
-            padding: 20px;
-            backdrop-filter: blur(6px);
-        }
+    /* Titles */
+    h1, h2, h3, h4 {
+        color: #fff;
+        font-weight: 800;
+        text-shadow: 2px 2px 8px #000;
+        background: linear-gradient(to right, #ff6a00, #ff007f, #0072ff, #ffd700);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
 
-        /* Title gradient text */
-        .st-emotion-cache-10trblm {
-            background: linear-gradient(to right, #ff6a00, #ee0979, #2575fc, #36d1dc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 3rem !important;
-            font-weight: 900 !important;
-            text-align: center;
-        }
+    /* Buttons */
+    .stButton > button {
+        background: linear-gradient(90deg, #ff6a00, #ff007f, #0072ff) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 12px !important;
+        padding: 0.6em 1.2em !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease-in-out !important;
+        box-shadow: 0px 4px 12px rgba(0,0,0,0.5);
+    }
+    .stButton > button:hover {
+        background: linear-gradient(90deg, #ffd700, #36d1dc, #8e2de2) !important;
+        transform: scale(1.05) !important;
+    }
+    .stButton > button:active {
+        transform: scale(0.95) !important;
+    }
 
-        /* Buttons */
-        div.stButton > button {
-            background: linear-gradient(45deg, #ff6a00, #ee0979);
-            color: white;
-            border-radius: 12px;
-            border: none;
-            padding: 0.6em 1.2em;
-            font-size: 1rem;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            transition: 0.3s ease;
-        }
-        div.stButton > button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 14px rgba(0,0,0,0.4);
-        }
+    /* Number Input Fields */
+    .stNumberInput > div > div > input {
+        background-color: rgba(255,255,255,0.1) !important; 
+        color: #fff !important;
+        border-radius: 8px !important;
+        border: 2px solid #ff6a00 !important;
+        padding: 6px 10px !important;
+    }
 
-        /* Metric cards */
-        .metric-card {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 16px;
-            border-radius: 14px;
-            margin: 10px 0;
-            font-size: 1.2rem;
-            font-weight: bold;
-            text-align: center;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-        }
+    /* Selectbox */
+    .stSelectbox > div > div > select {
+        background-color: rgba(0,0,0,0.5) !important;
+        color: #fff !important;
+        border-radius: 8px !important;
+        border: 2px solid #ff007f !important;
+        padding: 6px 10px !important;
+    }
+
+    /* MultiSelect */
+    .stMultiSelect > div > div {
+        background-color: rgba(0,0,0,0.5) !important;
+        color: #fff !important;
+        border-radius: 8px !important;
+        border: 2px solid #36d1dc !important;
+        padding: 6px 10px !important;
+    }
+
+    /* DataFrame table */
+    .stDataFrame {
+        border-radius: 12px !important;
+        overflow: hidden !important;
+        border: 2px solid #ff007f !important;
+    }
+
+    /* Success / Info boxes */
+    .stSuccess {
+        background-color: rgba(54,209,220,0.2) !important;
+        border-left: 6px solid #36d1dc !important;
+        border-radius: 8px !important;
+        padding: 10px !important;
+        color: white !important;
+    }
+    .stInfo {
+        background-color: rgba(255,106,0,0.2) !important;
+        border-left: 6px solid #ff6a00 !important;
+        border-radius: 8px !important;
+        padding: 10px !important;
+        color: white !important;
+    }
+
+    /* Custom Prediction Cards */
+    .metric-card {
+        background: linear-gradient(135deg, #ff007f, #36d1dc, #0072ff);
+        border-radius: 14px;
+        padding: 16px;
+        margin: 10px 0;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.6);
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #fff;
+        border: 2px solid #ffd700;
+        text-align: center;
+    }
     </style>
-    """,
-    unsafe_allow_html=True
-)
+""", unsafe_allow_html=True)
+
 
 
 
